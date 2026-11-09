@@ -1,4 +1,4 @@
-package com.example.queuesense
+package com.project.queuesense
 
 import org.junit.Test
 
