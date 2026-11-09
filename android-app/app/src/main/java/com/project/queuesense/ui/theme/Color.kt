@@ -1,4 +1,4 @@
-package com.example.queuesense.ui.theme
+package com.project.queuesense.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
