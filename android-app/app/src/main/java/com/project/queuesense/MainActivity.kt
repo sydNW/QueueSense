@@ -20,9 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QueueSenseTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    QueueSenseNavHost(modifier = Modifier.padding(innerPadding))
-                }
+                QueueSenseNavHost()
             }
         }
     }
