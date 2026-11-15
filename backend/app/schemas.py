@@ -1,0 +1,17 @@
+from pydantic import BaseModel, Field
+
+
+class ScenarioRequest(BaseModel):
+    """A recorded queue situation plus a few optional adjustments.
+
+    The limits are the ranges seen in the historical test data. Values outside
+    them would make the model extrapolate beyond anything it has seen.
+    """
+
+    base_row_id: int = Field(ge=0, description="Which recorded situation to start from")
+    patients_in_line: int | None = Field(default=None, ge=0, le=17)
+    avg_wait_last_w1: float | None = Field(default=None, ge=0, le=50)
+    avg_wait_last_w2: float | None = Field(default=None, ge=0, le=50)
+    avg_wait_last_w3: float | None = Field(default=None, ge=0, le=50)
+    start_time_hour: float | None = Field(default=None, ge=7, le=18.3)
+    day_of_week: int | None = Field(default=None, ge=2, le=6)
