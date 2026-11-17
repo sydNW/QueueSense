@@ -15,3 +15,13 @@ class ScenarioRequest(BaseModel):
     avg_wait_last_w3: float | None = Field(default=None, ge=0, le=50)
     start_time_hour: float | None = Field(default=None, ge=7, le=18.3)
     day_of_week: int | None = Field(default=None, ge=2, le=6)
+
+
+class CheckInRequest(BaseModel):
+    full_name: str = Field(min_length=1, max_length=100)
+    mobile: str | None = Field(default=None, max_length=20)
+    department: str
+
+
+class ActualWaitRequest(BaseModel):
+    actual_wait_min: float = Field(ge=0, le=300)

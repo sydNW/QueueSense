@@ -91,3 +91,19 @@ def predict_manual_scenario(base_row_id: int, overrides: dict) -> dict:
         "adjusted": adjusted,
         "change_min": round(adjusted["predicted_wait_min"] - base["predicted_wait_min"], 1),
     }
+
+
+
+
+# ---- Patient mode: queue state comes from a recorded situation ----
+
+def queue_snapshot(row_id: int) -> dict:
+    """Queue size at the moment of a recorded situation (real LineCount0 value)."""
+    in_line = int(_replay_features.iloc[row_id]["LineCount0"])
+    return {"patients_ahead": in_line, "queue_position": in_line + 1}
+
+
+def predict_snapshot(row_id: int) -> dict:
+    """Model prediction for a recorded situation, without its recorded actual wait."""
+    x = _replay_features.iloc[[row_id]]
+    return _predict_with_range(x)
