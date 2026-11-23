@@ -2,10 +2,15 @@ package com.project.queuesense.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Brand colours (estimated from the Figma wireframes)
+val Navy = Color(0xFF163D63)
+val Teal = Color(0xFF0B7C80)
+val TealDark = Color(0xFF0B5C5F)
+val TealPale = Color(0xFFE3F1F1)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Neutrals
+val PageBackground = Color(0xFFF4F8FB)
+val CardWhite = Color(0xFFFFFFFF)
+val TextDark = Color(0xFF16304A)
+val TextMuted = Color(0xFF5A6B7B)
+val OutlineGrey = Color(0xFFC9D5DF)
