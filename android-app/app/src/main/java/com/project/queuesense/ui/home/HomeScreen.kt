@@ -1,3 +1,4 @@
+
 package com.project.queuesense.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
@@ -27,30 +28,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.project.queuesense.data.SampleData
-import com.project.queuesense.data.model.QueueSummary
+import com.project.queuesense.data.model.Prediction
+import com.project.queuesense.data.model.QueueInfo
+import com.project.queuesense.data.model.Ticket
+import com.project.queuesense.data.model.TicketResponse
 import com.project.queuesense.ui.theme.QueueSenseTheme
 import java.time.LocalTime
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    summary: QueueSummary,
+    ticket: TicketResponse?,
     onCheckIn: () -> Unit,
     onViewQueue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val firstName = ticket?.ticket?.fullName?.trim()?.substringBefore(" ")
+
+    val waitText = if (ticket != null) {
+        "${ticket.prediction.rangeLowMin.roundToInt()}–${ticket.prediction.rangeHighMin.roundToInt()} min"
+    } else {
+        "—"
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = greeting(summary.patientName),
+            text = greeting(firstName),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
+
         Text(
-            text = "Here is your queue summary for today",
+            text = if (ticket != null) {
+                "Here is your queue summary for today"
+            } else {
+                "You are not in a queue yet"
+            },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -74,6 +91,7 @@ fun HomeScreen(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = "About this estimate",
@@ -85,7 +103,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "${summary.waitMinMinutes}–${summary.waitMaxMinutes} min",
+                    text = waitText,
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -95,12 +113,13 @@ fun HomeScreen(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     StatBlock(
-                        value = "#${summary.queuePosition}",
+                        value = ticket?.let { "#${it.queue.queuePosition}" } ?: "—",
                         label = "Queue position",
                         modifier = Modifier.weight(1f)
                     )
+
                     StatBlock(
-                        value = "${summary.patientsAhead}",
+                        value = ticket?.queue?.patientsAhead?.toString() ?: "—",
                         label = "Patients ahead",
                         modifier = Modifier.weight(1f)
                     )
@@ -114,7 +133,11 @@ fun HomeScreen(
             onClick = onCheckIn,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
+            Icon(
+                Icons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Check In")
         }
@@ -125,7 +148,11 @@ fun HomeScreen(
             onClick = onViewQueue,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(18.dp))
+            Icon(
+                Icons.Default.Person,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text("View Queue")
         }
@@ -133,13 +160,18 @@ fun HomeScreen(
 }
 
 @Composable
-private fun StatBlock(value: String, label: String, modifier: Modifier = Modifier) {
+private fun StatBlock(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         Text(
             text = value,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
+
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
@@ -148,14 +180,16 @@ private fun StatBlock(value: String, label: String, modifier: Modifier = Modifie
     }
 }
 
-private fun greeting(name: String): String {
+private fun greeting(name: String?): String {
     val hour = LocalTime.now().hour
+
     val part = when {
         hour < 12 -> "Good morning"
         hour < 17 -> "Good afternoon"
         else -> "Good evening"
     }
-    return "$part, $name"
+
+    return if (name.isNullOrBlank()) part else "$part, $name"
 }
 
 @Preview(showBackground = true)
@@ -163,7 +197,28 @@ private fun greeting(name: String): String {
 fun HomeScreenPreview() {
     QueueSenseTheme {
         HomeScreen(
-            summary = SampleData.queueSummary,
+            ticket = TicketResponse(
+                ticket = Ticket(
+                    1,
+                    "GM-001",
+                    "Sample Patient",
+                    "General Medicine",
+                    "waiting",
+                    "2026-11-17T09:12:00+03:00"
+                ),
+                prediction = Prediction(
+                    id = 1,
+                    dataSource = "hybrid_live",
+                    predictedWaitMin = 17.0,
+                    rangeLowMin = 12.0,
+                    rangeHighMin = 24.0,
+                    createdAt = "2026-11-17T09:38:00+03:00"
+                ),
+                queue = QueueInfo(
+                    patientsAhead = 6,
+                    queuePosition = 7
+                )
+            ),
             onCheckIn = {},
             onViewQueue = {}
         )

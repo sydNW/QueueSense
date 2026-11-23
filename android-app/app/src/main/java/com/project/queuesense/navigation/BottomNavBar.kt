@@ -1,3 +1,4 @@
+
 package com.project.queuesense.navigation
 
 import androidx.compose.material.icons.Icons
@@ -32,13 +33,22 @@ fun QueueSenseBottomBar(
     currentRoute: String?,
     onTabSelected: (String) -> Unit
 ) {
-    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
         bottomNavItems.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
                 onClick = { onTabSelected(item.route) },
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = item.label
+                    )
+                },
+                label = {
+                    Text(item.label)
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,

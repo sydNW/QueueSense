@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ScenarioRequest(BaseModel):
@@ -6,7 +6,10 @@ class ScenarioRequest(BaseModel):
 
     The limits are the ranges seen in the historical test data. Values outside
     them would make the model extrapolate beyond anything it has seen.
+    Unknown field names are rejected instead of being silently ignored.
     """
+
+    model_config = ConfigDict(extra="forbid")
 
     base_row_id: int = Field(ge=0, description="Which recorded situation to start from")
     patients_in_line: int | None = Field(default=None, ge=0, le=17)
@@ -18,10 +21,9 @@ class ScenarioRequest(BaseModel):
 
 
 class CheckInRequest(BaseModel):
-    full_name: str = Field(min_length=1, max_length=100)
+    full_name: str | None = Field(default=None, max_length=100)
     mobile: str | None = Field(default=None, max_length=20)
     department: str
-
 
 class ActualWaitRequest(BaseModel):
     actual_wait_min: float = Field(ge=0, le=300)
